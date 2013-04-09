@@ -1,7 +1,23 @@
 /*
-  A program to index directory entries in a db file
-  so the db can be searched to find absolute path to a file, if exists.
-  By Debjoy Das <debd92@gmail.com>
+* zork - a dir and file indexing program for linux
+* Author :: pointer.dev [at] gmail.com
+*           Copyright (C) 2013 
+* Released under           :: GPL v3
+* Release date (v0.4 beta) :: 2013-04-10
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <stdio.h>
