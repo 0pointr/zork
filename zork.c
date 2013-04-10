@@ -35,6 +35,7 @@
 #define MAX_LIST_ENT 50
 #define MAX_RECURSE 500
 #define ABS(x) x < 0 ? -(x) : x
+#define MIN(x, y) x < y ? x : y
 
 void init(void);
 char *get_line(char *looper, char *buff);
@@ -44,7 +45,7 @@ int push(DIR **dp_stack, DIR *item, int *dp_stack_top);
 DIR *pop(DIR **dp_stack, int *dp_stack_top);
 int add(char *dirname);
 int update(bool full);
-int search(const char *srch_key, bool p, char **list);
+int search(const char *srch_key, bool p, char **list, int tolerance);
 int rm_ent(const char *d_entry);
 void show_ent(void);
 
@@ -65,6 +66,8 @@ Available options:\n\
 \t   Using -r without the recursion count results in recursion to the innermost directory.\n\
 \t-a <dir name> Add a directory entry and update database\n\
 \t-u Update current database\n\
+\t-t Tolerant search. Allow unmatched characters in search string. Optionally give a\n\
+\t   of how many mismatches to allow. If none given, a default of 2 is assumed.\n\
 \t-s <search string> Search\n\
 \t-p <program name> Open selected search result in external program\n\
 \t-R <dir name> Remove a directory entry and update database\n\
@@ -366,8 +369,35 @@ int get_dir_depth(char *buff)
   return slash_count;
 }
 
+/* search with tolerance for unmatched characters */
+/* tol is the number of unmatched characters to allow */
+int tolerant_cmp(char *srcbuff, const char *str, int tol)
+{
+    register unsigned long i=0, j=0;
+    unsigned long src_len = strlen(srcbuff);
+    unsigned long str_len = strlen(str);
+    unsigned long tmp = 0;
+    int preserve_tol = tol;
+
+    for (; i<src_len && tmp<src_len; ) {
+        if (srcbuff[tmp] == str[j] || tol-- > 0) {
+            tmp++; j++;
+           /* if (j == str_len && i < src_len) j=0;*/
+           if (j == str_len) return 0;
+            continue;
+        }
+        else {
+            j=0;
+            tmp = ++i;
+            tol = preserve_tol;
+        }
+    }
+    if (j == ( MIN(src_len, str_len) )) return 0;
+    return 1;
+}
+
 /* search for given key in db_file */
-int search(const char *srch_key, bool p, char **list)
+int search(const char *srch_key, bool p, char **list, int tolerance)
 {
   if(access(db_file_abs, F_OK))
   { fputs("Database file doesn't exist.\n", stderr); exit(EXIT_FAILURE); }
@@ -388,7 +418,8 @@ int search(const char *srch_key, bool p, char **list)
   {
     char temp_entry[MAX_ABS_PATH_LEN];
     loop = get_line(loop, temp_entry);
-    if(strcasestr(temp_entry, srch_key)) /* returns null if not found */
+    if( strcasestr(temp_entry, srch_key) || /* returns null if not found */
+        (tolerance && !tolerant_cmp(temp_entry, srch_key, tolerance)) )
     { 
       if(!p) printf("%s\n", temp_entry); 
       else if(indx<MAX_LIST_ENT) /* if to be run with a program */
@@ -522,19 +553,21 @@ int main(int argc, char **argv)
     usage(progname, EXIT_FAILURE);
 
   bool prog_start = 0;
-  bool valid_args = 0;
+  bool valid_args = 1;
   char *list[MAX_LIST_ENT];
   char *launch_prog=NULL;
   char temp, *tmp;
   int list_ents=0; /* number of list entries in case -p is used */
+  int tol=0;
 
-  while((temp = getopt(argc, argv, "ur::vhFp:a:s:R:")) != -1)
+  while((temp = getopt(argc, argv, "ur::vhFp:a:s:t::R:")) != -1)
   {
 
     switch(temp)
     {
       case 'p': if(optarg) {
                   launch_prog = optarg; prog_start = 1;
+                  valid_args = false;
                   }
                 else usage(progname, 1);
                 break;
@@ -564,14 +597,23 @@ int main(int argc, char **argv)
                 if(optarg) {
                   tmp = optarg;
                   recurse_l = ABS(atoi(tmp));
+                  valid_args = false;
                 }
                 else recurse_l = MAX_RECURSE-1;
                 break;
 
+      case 't': if(optarg) {
+                   tmp = optarg;
+                   tol = ABS(atoi(tmp));
+                   valid_args = false;
+                }
+                else tol=2;
+                break;
+
       case 's': if(optarg) {
                   tmp = optarg;
-                  if(!prog_start) search((const char*)tmp, 0, NULL);
-                  else list_ents = search((const char*)tmp, 1, list);
+                  if(!prog_start) search((const char*)tmp, 0, NULL, tol);
+                  else list_ents = search((const char*)tmp, 1, list, tol);
                   valid_args = true;
                 }
                 else usage(progname, 1);
@@ -581,7 +623,6 @@ int main(int argc, char **argv)
                   tmp = optarg;
                   if(!rm_ent((const char*)tmp)) 
                     update(1);
-                  valid_args = true;
                 }
                 else usage(progname, 1); 
                 break;
