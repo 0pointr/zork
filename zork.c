@@ -133,7 +133,7 @@ int add(char *dirname)
   {
     stat((const char*)dirname, &buff);
     if(!(buff.st_mode & S_IFDIR))
-    { fputs("Not a dir.", stderr); exit(EXIT_FAILURE); }
+    { fputs("Not a dir.\n", stderr); exit(EXIT_FAILURE); }
   }
   
   FILE *fp;
@@ -223,7 +223,7 @@ int update(bool full)
   FILE *db;
 
   if(access(d_file_abs, F_OK))
-  { fputs("No dirs added to create index.", stderr); exit(EXIT_FAILURE); }
+  { fputs("No dirs added to create index.\n", stderr); exit(EXIT_FAILURE); }
 
   if(full)
     db = fopen(db_file_abs,"w"); /* open db file */
@@ -444,7 +444,7 @@ int search(const char *srch_key, bool p, char **list, int tolerance)
 int rm_ent(const char *d_entry)
 {
   if(access(d_file_abs, F_OK))
-  { fputs("No dirs added yet.", stderr); exit(EXIT_FAILURE); }
+  { fputs("No dirs added yet.\n", stderr); exit(EXIT_FAILURE); }
 
   FILE *dir_names = fopen(d_file_abs, "r");
   fseek(dir_names, 0L, SEEK_END);
