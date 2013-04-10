@@ -72,6 +72,7 @@ Available options:\n\
 \t-s <search string> Search\n\
 \t-p <program name> Open selected search result in external program\n\
 \t-R <dir name> Remove a directory entry and update database\n\
+\t-v Show currently indexed directories\n\
 \t-h This help text\n\
 Note: Multiple options can be used at once, but order of the options matter.\n\
 \t-p should be used with -s and placed before -s.\n\

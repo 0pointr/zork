@@ -17,6 +17,7 @@ Available options:
 &nbsp;&nbsp;&nbsp;&nbsp;-s *search string* Search  
 &nbsp;&nbsp;&nbsp;&nbsp;-p *program name* Open selected search result in external program  
 &nbsp;&nbsp;&nbsp;&nbsp;-R *dir name* Remove a directory entry and update database  
+&nbsp;&nbsp;&nbsp;&nbsp;-v Show currently indexed directories  
 &nbsp;&nbsp;&nbsp;&nbsp;-h This help text  
 
 <b>Note:</b> Multiple options can be used at once, but order of the options matter.
