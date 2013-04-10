@@ -66,7 +66,7 @@ Available options:\n\
 \t   Using -r without the recursion count results in recursion to the innermost directory.\n\
 \t-a <dir name> Add a directory entry and update database\n\
 \t-u Update current database\n\
-\t-t Tolerant search. Allow unmatched characters in search string. Optionally give a\n\
+\t-t Tolerant search. Allow unmatched characters in search string. Optionally give a count\n\
 \t   of how many mismatches to allow. If none given, a default of 2 is assumed.\n\
 \t-s <search string> Search\n\
 \t-p <program name> Open selected search result in external program\n\
