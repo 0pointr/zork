@@ -45,6 +45,7 @@ int push(DIR **dp_stack, DIR *item, int *dp_stack_top);
 DIR *pop(DIR **dp_stack, int *dp_stack_top);
 int add(char *dirname);
 int update(bool full);
+int tolerant_cmp(char *srcbuff, const char *str, int tol);
 int search(const char *srch_key, bool p, char **list, int tolerance);
 int rm_ent(const char *d_entry);
 void show_ent(void);
